@@ -148,6 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 608c01a502791694c8d8b7d3a9594576, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Script_PlayerCameraMove
+  moveSpeed: 10
+  rotateSpeed: 15
+  player: {fileID: 8381978157872020467}
 --- !u!4 &326461478
 Transform:
   m_ObjectHideFlags: 0
@@ -250,12 +253,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.9961947, z: -0.08715578, w: 0}
-  m_LocalPosition: {x: 0, y: 1.1, z: 3.5}
+  m_LocalRotation: {x: -0.08715578, y: -0, z: -0, w: -0.9961947}
+  m_LocalPosition: {x: 0, y: 1.9000001, z: -3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1402519329}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 10, y: 180, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
@@ -626,9 +629,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef7785f7b262f534ba18b406319b91f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Script_CameraManager
-  cameraPivot: {fileID: 1402519329}
-  cameraSensitivity: 200
-  smoothSpeed: 50
+  targetObject: {fileID: 8381978157872020463}
+  cameraSpeed: 200
+  cameraMin: -20
+  cameraMax: 60
 --- !u!4 &1095175092
 Transform:
   m_ObjectHideFlags: 0
@@ -644,38 +648,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1402519328
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1402519329}
-  m_Layer: 0
-  m_Name: CameraPivot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1402519329
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1402519328}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0.8, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 330585546}
-  m_Father: {fileID: 8381978157872113619}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &8381978157872020097
 GameObject:
   m_ObjectHideFlags: 0
@@ -2848,6 +2820,8 @@ GameObject:
   - component: {fileID: 8381978157882216399}
   - component: {fileID: 8381978157882216387}
   - component: {fileID: 8381978157882063957}
+  - component: {fileID: 8381978157882216400}
+  - component: {fileID: 8381978157882216402}
   m_Layer: 0
   m_Name: SD_unitychan_humanoid
   m_TagString: Untagged
@@ -5065,7 +5039,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1402519329}
   - {fileID: 8381978157872113629}
   - {fileID: 8381978157872113615}
   - {fileID: 8381978157872113631}
@@ -6048,6 +6021,33 @@ MonoBehaviour:
   - {fileID: 8381978157882216249}
   - {fileID: 8381978157882216251}
   - {fileID: 8381978157882216247}
+--- !u!54 &8381978157882216400
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8381978157872020467}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!114 &8381978157882216401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6070,6 +6070,29 @@ MonoBehaviour:
   colliders: []
   debug: 1
   threshold: 0.01
+--- !u!136 &8381978157882216402
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8381978157872020467}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &8381978157882216403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6718,6 +6741,7 @@ SkinnedMeshRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 775810807}
