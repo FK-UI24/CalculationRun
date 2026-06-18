@@ -12,6 +12,10 @@ public class Script_PlayerCameraMove : MonoBehaviour
     [Header("プレイヤー")]
     [SerializeField] private GameObject player;
 
+    [Header("ジャンプ力")]
+    [SerializeField] private float jumpForce;
+
+
     //プレイヤーのRigidBodyを扱う用変数
     private Rigidbody playerRb;
 
@@ -21,10 +25,24 @@ public class Script_PlayerCameraMove : MonoBehaviour
     //縦方向
     private float inputVertical;
 
+    //プレイヤーのAnimatorを格納する用変数
+    private Animator playerAnimator;
+
+
     private void Start()
     {
         //プレイヤーのRigidBodyを取得する
         playerRb=player.GetComponent<Rigidbody>();
+
+        //プレイヤーのanimatorを取得する
+        playerAnimator = player.GetComponent<Animator>();
+
+        //プレイヤーのanimatorを初期化する
+        playerAnimator.SetBool("Next", false);
+        playerAnimator.SetBool("Back", false);
+        playerAnimator.SetBool("Jump", false);
+
+
     }
 
     private void Update()
@@ -36,6 +54,9 @@ public class Script_PlayerCameraMove : MonoBehaviour
         inputHorizontal = Input.GetAxisRaw("Horizontal");
         //W:1～-1:Sの範囲で徐々に変化させる
         inputVertical = Input.GetAxisRaw("Vertical");
+
+        MoveAnimationController();
+
     }
 
     ///Updateは毎フレームの実行（例：60FPSなら1秒間に約60回実行する）
@@ -73,4 +94,35 @@ public class Script_PlayerCameraMove : MonoBehaviour
 
         }
     }
+
+    private void Jump()
+    {
+        playerRb.linearVelocity = new Vector3(playerRb.linearVelocity.x, jumpForce, playerRb.linearVelocity.z);
+    }
+
+    private void MoveAnimationController()
+    {
+        AnimatorStateInfo stateInfo = playerAnimator.GetCurrentAnimatorStateInfo(0);
+
+        playerAnimator.SetBool("Next", false);
+        playerAnimator.SetBool("Back", false);
+        playerAnimator.SetBool("Jump", false);
+
+
+        if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
+        {
+            playerAnimator.SetBool("Next", true);
+        }
+        else playerAnimator.SetBool("Back", true);
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            playerAnimator.SetBool("Jump", true);
+
+            Jump();
+
+        }
+
+    }
+
 }
