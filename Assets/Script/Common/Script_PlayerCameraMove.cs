@@ -1,6 +1,8 @@
 using NUnit.Framework.Constraints;
 using UnityEngine;
 
+//これはSDUnityちゃんに直接アタッチするスクリプト
+
 public class Script_PlayerCameraMove : MonoBehaviour
 {
     [Header("プレイヤーの移動速度")]
@@ -9,11 +11,11 @@ public class Script_PlayerCameraMove : MonoBehaviour
     [Header("プレイヤーの回転速度")]
     [SerializeField] private float rotateSpeed;
 
-    [Header("プレイヤー")]
-    [SerializeField] private GameObject player;
-
     [Header("ジャンプ力")]
     [SerializeField] private float jumpForce;
+
+    [Header("プレイヤーの着地アニメーション判定に使用するRayの長さ")]
+    [SerializeField] private float rayLength;
 
 
     //プレイヤーのRigidBodyを扱う用変数
@@ -28,20 +30,23 @@ public class Script_PlayerCameraMove : MonoBehaviour
     //プレイヤーのAnimatorを格納する用変数
     private Animator playerAnimator;
 
+    //ジャンプ用地面接触フラグ（ジャンプの可否を判断するのに使用、true=ジャンプできる、false=ジャンプできない）
+    private bool isGrounded = false;
+
+    //着地予測済みかを判定するフラグ
+    private bool hasPredictedLand = false;
 
     private void Start()
     {
         //プレイヤーのRigidBodyを取得する
-        playerRb=player.GetComponent<Rigidbody>();
+        playerRb = GetComponent<Rigidbody>();
 
         //プレイヤーのanimatorを取得する
-        playerAnimator = player.GetComponent<Animator>();
+        playerAnimator = GetComponent<Animator>();
 
         //プレイヤーのanimatorを初期化する
         playerAnimator.SetBool("Next", false);
         playerAnimator.SetBool("Back", false);
-        playerAnimator.SetBool("Jump", false);
-
 
     }
 
@@ -55,8 +60,8 @@ public class Script_PlayerCameraMove : MonoBehaviour
         //W:1～-1:Sの範囲で徐々に変化させる
         inputVertical = Input.GetAxisRaw("Vertical");
 
+        //移動のアニメーションとジャンプの管理をする関数を呼び出す
         MoveAnimationController();
-
     }
 
     ///Updateは毎フレームの実行（例：60FPSなら1秒間に約60回実行する）
@@ -67,7 +72,7 @@ public class Script_PlayerCameraMove : MonoBehaviour
     {
         //カメラの方向から、XZ平面の単位ベクトルを取得する
         ///Vector3.Scaleはベクトルの各成分を掛け算する。今回はXとZはそのままでYだけ0にする→水平面だけの前方向にする
-        ///Camera.maini.transform.forwardはカメラが向いている前方向(3次元ベクトル、Y成分も含む)→例：上を向いている(0,0.7,0.7)
+        ///Camera.main.transform.forwardはカメラが向いている前方向(3次元ベクトル、Y成分も含む)→例：上を向いている(0,0.7,0.7)
         ///normalizedはベクトルの長さを１にする(正規化)→例：方向はそのままで、大きさを一定にする(2,0,2)→(0.7,0,0.7)
         Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
 
@@ -90,14 +95,67 @@ public class Script_PlayerCameraMove : MonoBehaviour
             ///Quaternion.Slerp(現在の向き、目標の向き、どれくらい進むか(0～1))は現在の向きから目標の向きに雨らかに移動する関数
             ///どれくらい進むか(0～1)→0はそのまま動いていない、0.5は目標まであと半分くらい、1は目標に到達
             ///→例：rotateSpeed=10,deltaTime=0.16の場合、t=0.16となり毎フレーム「0.16%」ずつ近づく
-            player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
 
         }
     }
 
+
+    //単純にジャンプのために速度を変える関数
     private void Jump()
     {
+        //プレイヤーのY方向の速度だけを変更する。X,Z軸は今の状態のものをそのまま参照する
         playerRb.linearVelocity = new Vector3(playerRb.linearVelocity.x, jumpForce, playerRb.linearVelocity.z);
+    }
+
+    //今のフレームで「Field」タグの地面に乗っているかの確認をする関数
+    ///何かしらのオブジェクトと衝突している間、毎フレーム呼ばれる関数（Unityで定義されているイベント関数）
+    ///引数は衝突しているオブジェクトの情報、戻り値は無し
+    private void OnCollisionStay(Collision collision)
+    {
+        //衝突しているオブジェクトのタグが「Field」だったら
+        if (collision.gameObject.CompareTag("Field"))
+        {
+            //接触点を全て確認する
+            ///contacts...接触している点のリスト。今回の場合は衝突しているオブジェクトの接触している点
+            ///ContactPoint...１つの接触点の詳細情報
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                //もし接触している点がある程度上向きなら
+                ///contact.normal...接触面の「向き」を表すベクトル
+                ///今回の場合接触面の上方向の成分だけを取り出し、その向きを確認している
+                ///真上...normal.y=1.0
+                ///斜め上...normal.y=0.5～0.9
+                ///横（壁）...normal.y=0
+                ///下...normal.y=-1
+                ///今回の条件を「contact.normal.y==1.0f」とかにすると
+                ///完全に上向きのオブジェクト上じゃないとジャンプできなくなる
+                if (contact.normal.y > 0.5f)
+                {
+                    //地面に乗っていることにする→ジャンプ可能状態であるということ
+                    isGrounded = true;
+
+                    //ここでreturnなのは、どこかしら衝突していれば関数を終了していいから
+                    //仮にbreakだと動きはするが無駄な処理が入る
+                    return;
+                }
+            }
+        }
+    }
+
+    //衝突していたオブジェクトから離れた時に、そのオブジェクトが「Field」タグかを確認する関数
+    ///衝突していた何かしらのオブジェクトから離れた瞬間に呼ばれる関数（Unityで定義されているイベント関数）
+    ///これは毎フレームではなく、離れた一瞬の1回だけ呼ばれる
+    ///こっちのcollisionには「今離れた相手の情報」が入る
+    private void OnCollisionExit(Collision collision)
+    {
+        //もし離れたオブジェクトのタグが「Field」だったら
+        if (collision.gameObject.CompareTag("Field"))
+        {
+            //地面に乗ってないことにする→ジャンプ状態であるor落下状態である→ジャンプできない状態
+            isGrounded = false;
+
+        }
     }
 
     private void MoveAnimationController()
@@ -106,7 +164,6 @@ public class Script_PlayerCameraMove : MonoBehaviour
 
         playerAnimator.SetBool("Next", false);
         playerAnimator.SetBool("Back", false);
-        playerAnimator.SetBool("Jump", false);
 
 
         if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
@@ -115,9 +172,12 @@ public class Script_PlayerCameraMove : MonoBehaviour
         }
         else playerAnimator.SetBool("Back", true);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        //スペースが押されたかつ地面についているとき
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !stateInfo.IsName("TopToGround"))
         {
-            playerAnimator.SetBool("Jump", true);
+            //ジャンプ開始のトリガーをいれる
+            ///アニメーターのトリガーは一瞬だけONになるので、すぐ自動でOFFに戻る
+            playerAnimator.SetTrigger("JumpStart");
 
             Jump();
 
