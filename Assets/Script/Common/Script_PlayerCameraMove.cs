@@ -33,9 +33,6 @@ public class Script_PlayerCameraMove : MonoBehaviour
     //ジャンプ用地面接触フラグ（ジャンプの可否を判断するのに使用、true=ジャンプできる、false=ジャンプできない）
     private bool isGrounded = false;
 
-    //着地予測済みかを判定するフラグ
-    private bool hasPredictedLand = false;
-
     private void Start()
     {
         //プレイヤーのRigidBodyを取得する
