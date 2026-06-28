@@ -17,7 +17,6 @@ public class Script_CubeNumCamera : MonoBehaviour
     {
         //タイルの子オブジェクトの数字テキストを格納する
         numText = GetComponentInChildren<TMP_Text>();
-        Debug.Log(numText);
     }
 
     private void Update()

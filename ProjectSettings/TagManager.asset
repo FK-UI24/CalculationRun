@@ -5,6 +5,15 @@ TagManager:
   serializedVersion: 3
   tags:
   - Field
+  - Field_1
+  - Field_2
+  - Field_3
+  - Field_4
+  - Field_5
+  - Field_6
+  - Field_7
+  - Field_8
+  - Field_9
   layers:
   - Default
   - TransparentFX

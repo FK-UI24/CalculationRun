@@ -110,8 +110,8 @@ public class Script_PlayerCameraMove : MonoBehaviour
     ///引数は衝突しているオブジェクトの情報、戻り値は無し
     private void OnCollisionStay(Collision collision)
     {
-        //衝突しているオブジェクトのタグが「Field」だったら
-        if (collision.gameObject.CompareTag("Field"))
+        //衝突しているオブジェクトのタグに「Field」が含まれていたら
+        if (collision.gameObject.tag.Contains("Field"))
         {
             //接触点を全て確認する
             ///contacts...接触している点のリスト。今回の場合は衝突しているオブジェクトの接触している点
@@ -146,8 +146,8 @@ public class Script_PlayerCameraMove : MonoBehaviour
     ///こっちのcollisionには「今離れた相手の情報」が入る
     private void OnCollisionExit(Collision collision)
     {
-        //もし離れたオブジェクトのタグが「Field」だったら
-        if (collision.gameObject.CompareTag("Field"))
+        //もし離れたオブジェクトのタグに「Field」が含まれていたら
+        if (collision.gameObject.tag.Contains("Field"))
         {
             //地面に乗ってないことにする→ジャンプ状態であるor落下状態である→ジャンプできない状態
             isGrounded = false;
@@ -170,7 +170,7 @@ public class Script_PlayerCameraMove : MonoBehaviour
         else playerAnimator.SetBool("Back", true);
 
         //スペースが押されたかつ地面についているとき
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !stateInfo.IsName("TopToGround"))
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             //ジャンプ開始のトリガーをいれる
             ///アニメーターのトリガーは一瞬だけONになるので、すぐ自動でOFFに戻る
