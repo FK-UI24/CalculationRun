@@ -75,4 +75,9 @@ public class Script_Respworn : MonoBehaviour
         }
     }
 
+    public void MidleRespworn()
+    {
+        RespwornPos = new Vector3(0, 1, 111.5f);
+    }
+
 }

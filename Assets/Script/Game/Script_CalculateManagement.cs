@@ -56,42 +56,6 @@ public class Script_CalculateManagement : MonoBehaviour
     private void OnEnable()
     {
         StartCoroutine(countDownCalculate());
-
-        //ここから下はリスポーン処理時のタイル処理をそのまま持ってきている
-        //→なぜ必要か？最初「Script_StartManager」で全てのタイルが無効化されている。そのため一度明示的に表示させる必要がある？
-        //→でもScript_StartManager内で一応表示はしているはずなのに...七不思議やなぁ...皆目見当もつかんわぁ...
-        //消えたタイルを復活させる
-        //タイルの子オブジェクトの個数分（タイル列の数）
-        for (int i = 0; i < tileParent.childCount; i++)
-        {
-            //各列を代入する
-            Transform row = tileParent.GetChild(i);
-
-            //代入した１つの列の子オブジェクトの個数分
-            for (int j = 0; j < row.childCount; j++)
-            {
-                //代入した列の子オブジェクトを取得する
-                Transform tile = row.GetChild(j);
-
-                //取得した１つのタイルのオブジェクトを復活させる
-                tile.gameObject.SetActive(true);
-
-                //各タイルについている子オブジェクトも復活させる
-                for (int k = 0; k < tile.childCount; k++)
-                {
-                    tile.GetChild(k).gameObject.SetActive(true);
-
-                    //さらにそれについている子オブジェクトも復活させる（やり方は同じ）
-                    Transform tilechild = tile.GetChild(k);
-
-                    for (int l = 0; l < tilechild.childCount; l++)
-                    {
-                        tilechild.GetChild(l).gameObject.SetActive(true);
-                    }
-                }
-
-            }
-        }
     }
 
     //カウントダウンを行い、式を表示
