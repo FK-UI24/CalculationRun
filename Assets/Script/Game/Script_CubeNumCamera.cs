@@ -7,9 +7,6 @@ public class Script_CubeNumCamera : MonoBehaviour
     //タイルの数字テキストを扱う用変数
     private TMP_Text numText;
 
-    //離れた時の時間を計測する用変数
-    private float timer = 0f;
-
     //コルーチン管理用
     private Coroutine showCoroutine;
 
@@ -62,5 +59,4 @@ public class Script_CubeNumCamera : MonoBehaviour
         //数字テキストを再表示する
         numText.gameObject.SetActive(true);
     }
-
 }
