@@ -44,12 +44,12 @@ public class Script_CubeNumCamera : MonoBehaviour
         }
     }
 
-    //タグが「Player」から離れたら子オブジェクトの数字テキストをつける
+    //タグが「Player」から離れたらタイルを消す（下のコルーチンを使えば、文字だけ再表示可能）
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player")){
-            //１秒後に再表示するコルーチンを起動する
-            showCoroutine = StartCoroutine(ExitTimer());
+            //離れたらタイルを消す
+            gameObject.SetActive(false);
         }
     }
 

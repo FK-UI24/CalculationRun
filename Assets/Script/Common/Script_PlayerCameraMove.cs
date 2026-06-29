@@ -3,7 +3,7 @@ using UnityEngine;
 
 //これはSDUnityちゃんに直接アタッチするスクリプト
 
-public class Script_PlayerCameraMove : MonoBehaviour
+public class Script_PlayerController : MonoBehaviour
 {
     [Header("プレイヤーの移動速度")]
     [SerializeField]private float moveSpeed;
