@@ -26,7 +26,7 @@ public class Script_CalculateManagement : MonoBehaviour
     [SerializeField] private int countdown;
 
     [Header("制限時間テキスト")]
-    [SerializeField] private TMP_Text countdownText;
+    [SerializeField] private TMP_Text[] countdownText;
 
     [Header("四則演算を表示するテキスト")]
     [SerializeField] private TMP_Text calculateText;
@@ -40,13 +40,20 @@ public class Script_CalculateManagement : MonoBehaviour
     //タイルを消す直前のタイルを格納する用変数
     private List<GameObject> objs= new List<GameObject>();
 
+    //カウントダウン用のSEを格納する用変数
+    private AudioSource[] SE;
+
     void Start()
     {
         //式を生成し、テキストに表示と答えを保存
         GenerateExpression();
 
         //カウントダウンテキストに初期値を入れる
-        countdownText.text = countdown.ToString();
+        countdownText[0].text = countdown.ToString();
+        countdownText[1].text = countdown.ToString();
+
+        //SEを格納する
+        SE = GetComponents<AudioSource>();
 
     }
 
@@ -61,48 +68,67 @@ public class Script_CalculateManagement : MonoBehaviour
     //カウントダウンを行い、式を表示
     private IEnumerator countDownCalculate()
     {
+        //基本シーンが変わるまでは無限に動くので特にこのループは抜けない
         while (true)
         {
+            //カウントダウンをするタイマー
             int timer = countdown;
 
+            //もし今表示されているタイルを全てをまとめたリストが空でなく、ansが最初だけあり得る0以外なら
             if (objs != null && ans != 0)
             {
+                //今非表示されているタイルをすべて表示する
                 for (int i = 0; i < objs.Count; i++)
                 {
                     objs[i].SetActive(true);
                 }
             }
 
+            //中身をすべてクリアする。これがないと配列の中身がどんどん増えていっちゃう
             objs.Clear();
 
             //タイマーがー0より大きい間
             while (timer >= 0)
             {
                 //タイマーの現在の時間をカウントダウンテキストに入れる
-                countdownText.text = timer.ToString();
+                countdownText[0].text = timer.ToString();
+                countdownText[1].text = timer.ToString();
 
                 //1秒待つ
                 yield return new WaitForSeconds(1f);
+
+                //SEを鳴らす
+                SE[2].Play();
 
                 //１秒待ったのでタイマーから１引く
                 timer--;
             }
 
-            //ここでタイルを消す
-            for(int i = 1; i <= 9; i++)
+            //SEを鳴らす
+            SE[1].Play();
+
+            //ここで正解タイル以外を消す
+            for (int i = 1; i <= 9; i++)
             {
+                //もしansと同じなら下の処理はスキップする
                 if (i == ans) continue;
+
+                //指定のタグのゲームオブジェクトをリストに入れる
+                ///AddRange...指定した要素の全てをまとめてリストに追加するメソッド
                 objs.AddRange(GameObject.FindGameObjectsWithTag("Field_" + i));
             }
 
+            //正解タイル以外を無効化する
             for(int i = 0; i < objs.Count; i++)
             {
                 objs[i].SetActive(false);
             }
 
-
+            //正解確認用で1秒待機する
+            //ここを伸ばせば正解タイルのみ表示する答え合わせ時間が増える
             yield return new WaitForSeconds(1f);
 
+            //ここで次の式を生成する
             GenerateExpression();
         }
     }

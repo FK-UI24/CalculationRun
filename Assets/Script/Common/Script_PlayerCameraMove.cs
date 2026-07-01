@@ -3,7 +3,7 @@ using UnityEngine;
 
 //これはSDUnityちゃんに直接アタッチするスクリプト
 
-public class Script_PlayerController : MonoBehaviour
+public class Script_PlayerCameraMove : MonoBehaviour
 {
     [Header("プレイヤーの移動速度")]
     [SerializeField]private float moveSpeed;
@@ -14,8 +14,8 @@ public class Script_PlayerController : MonoBehaviour
     [Header("ジャンプ力")]
     [SerializeField] private float jumpForce;
 
-    [Header("プレイヤーの着地アニメーション判定に使用するRayの長さ")]
-    [SerializeField] private float rayLength;
+    [Header("開発者モード")]
+    [SerializeField]private bool isDevMode = false;
 
 
     //プレイヤーのRigidBodyを扱う用変数
@@ -33,6 +33,12 @@ public class Script_PlayerController : MonoBehaviour
     //ジャンプ用地面接触フラグ（ジャンプの可否を判断するのに使用、true=ジャンプできる、false=ジャンプできない）
     private bool isGrounded = false;
 
+    //プレイヤーのジャンプ音を格納する用変数
+    private AudioSource jumpSE;
+
+    //プレイヤーの移動音を格納する用変数
+    private AudioSource runSE;
+
     private void Start()
     {
         //プレイヤーのRigidBodyを取得する
@@ -45,10 +51,17 @@ public class Script_PlayerController : MonoBehaviour
         playerAnimator.SetBool("Next", false);
         playerAnimator.SetBool("Back", false);
 
+        //ジャンプ音を格納する
+        jumpSE = GetComponents<AudioSource>()[0];
+
+        //移動音を格納する
+        runSE = GetComponents<AudioSource>()[1];
     }
 
     private void Update()
     {
+        if (!Script_StartManager.startUnitytyan) return;
+
         //WASDの入力を取得している
         ///GetAxisは滑らかに変化させる（徐々に変化させる）
         ///GetAxisRawは即座に-1/0/1を返す（カクっと動く）
@@ -95,6 +108,27 @@ public class Script_PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
 
         }
+
+        //今のアニメーションの状態を取得する
+        AnimatorStateInfo stateInfo = playerAnimator.GetCurrentAnimatorStateInfo(0);
+
+        //もし今のアニメーションが「Running@loop」で地面にいるなら
+        if (stateInfo.IsName("Running@loop") && isGrounded)
+        {
+            //既に移動音がなっているなら何もしない
+            if (runSE.isPlaying) return;
+
+            //移動音を鳴らしつつ、ループにする
+            runSE.Play();
+            runSE.loop = true;
+        }
+        //それ以外なら止める
+        else
+        {
+            runSE.Stop();
+            runSE.loop = false;
+        }
+
     }
 
 
@@ -103,6 +137,10 @@ public class Script_PlayerController : MonoBehaviour
     {
         //プレイヤーのY方向の速度だけを変更する。X,Z軸は今の状態のものをそのまま参照する
         playerRb.linearVelocity = new Vector3(playerRb.linearVelocity.x, jumpForce, playerRb.linearVelocity.z);
+
+        //ジャンプ音を鳴らす
+        jumpSE.Play();
+
     }
 
     //今のフレームで「Field」タグの地面に乗っているかの確認をする関数
@@ -157,7 +195,6 @@ public class Script_PlayerController : MonoBehaviour
 
     private void MoveAnimationController()
     {
-        AnimatorStateInfo stateInfo = playerAnimator.GetCurrentAnimatorStateInfo(0);
 
         playerAnimator.SetBool("Next", false);
         playerAnimator.SetBool("Back", false);
@@ -169,8 +206,17 @@ public class Script_PlayerController : MonoBehaviour
         }
         else playerAnimator.SetBool("Back", true);
 
+        //開発者モードなら無限ジャンプ
+        if (Input.GetKeyDown(KeyCode.Space) && isDevMode)
+        {
+            //ジャンプ開始のトリガーをいれる
+            ///アニメーターのトリガーは一瞬だけONになるので、すぐ自動でOFFに戻る
+            playerAnimator.SetTrigger("JumpStart");
+
+            Jump();
+        }
         //スペースが押されたかつ地面についているとき
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        else if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             //ジャンプ開始のトリガーをいれる
             ///アニメーターのトリガーは一瞬だけONになるので、すぐ自動でOFFに戻る

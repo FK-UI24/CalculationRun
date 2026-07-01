@@ -15,7 +15,7 @@ public class Script_Respworn : MonoBehaviour
     private Vector3 RespwornPos;
 
     //リスポーン時の音声を格納する用変数
-    private AudioSource respwornSE;
+    private AudioSource[] respwornSE;
 
 
     private void Start()
@@ -24,7 +24,7 @@ public class Script_Respworn : MonoBehaviour
         RespwornPos = new Vector3(0, 1, 0);
         
         //リスポーン音声を格納する
-        respwornSE = GetComponent<AudioSource>();
+        respwornSE = GetComponents<AudioSource>();
 
     }
 
@@ -66,11 +66,14 @@ public class Script_Respworn : MonoBehaviour
                 }
             }
 
+            //スコアタイマーを増加させる
+            Script_ScoreTimer.scoreTimer += 10;
+
             //プレイヤーの位置を指定の位置に戻す
             Player.transform.position = RespwornPos;
 
             //リスポーン音声を鳴らす
-            respwornSE.Play();
+            respwornSE[0].Play();
 
         }
     }
