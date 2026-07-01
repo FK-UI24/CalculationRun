@@ -102,6 +102,10 @@ public class Script_StartManager : MonoBehaviour
         SEs[2].Play();
         SEs[2].loop = true;
 
+        //マウスカーソルを非表示にして画面中央で固定する
+        Cursor.lockState = CursorLockMode.Locked;
+
+
     }
 
 }

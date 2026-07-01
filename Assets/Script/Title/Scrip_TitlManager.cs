@@ -22,6 +22,9 @@ public class Scrip_TitlManager : MonoBehaviour
     [Header("曜日表示テキスト")]
     [SerializeField] private TMP_Text weekText;
 
+    [Header("ベストスコア表示テキスト")]
+    [SerializeField] private TMP_Text bestScoreText;
+
     private AudioSource[] SE;
 
     private void Start()
@@ -42,6 +45,9 @@ public class Scrip_TitlManager : MonoBehaviour
         string[] week = { "日", "月", "火", "水", "木", "金", "土" };
         weekText.text = "(" + week[(int)DateTime.Now.DayOfWeek] + ")";
 
+        if (PlayerPrefs.HasKey("bestscore")) bestScoreText.text = "ベストスコア：" + PlayerPrefs.GetInt("bestscore");
+        else bestScoreText.text = "ベストスコア：なし！";
+
     }
 
 
@@ -58,6 +64,9 @@ public class Scrip_TitlManager : MonoBehaviour
 
             SE[0].Play();
 
+            if (PlayerPrefs.HasKey("bestscore_hard")) bestScoreText.text = "ベストスコア：" + PlayerPrefs.GetInt("bestscore_hard");
+            else bestScoreText.text = "ベストスコア：なし！";
+
         }
         else
         {
@@ -68,6 +77,10 @@ public class Scrip_TitlManager : MonoBehaviour
             hardButtonText.text = "む\nず\nか\nし\nい";
 
             SE[1].Play();
+
+            if (PlayerPrefs.HasKey("bestscore")) bestScoreText.text = "ベストスコア：" + PlayerPrefs.GetInt("bestscore");
+            else bestScoreText.text = "ベストスコア：なし！";
+
 
         }
     }

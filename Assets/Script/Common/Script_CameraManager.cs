@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class Script_CameraManager : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class Script_CameraManager : MonoBehaviour
     [Header("カメラの上下方向の最大値")]
     [SerializeField] private float cameraMax;
 
+    [Header("カメラ感度調整スライダー")]
+    [SerializeField] private Slider cSlider;
+
     //ターゲットのポジションを格納する用変数
     private Vector3 targetPos;
 
@@ -26,12 +30,16 @@ public class Script_CameraManager : MonoBehaviour
         targetPos = targetObject.transform.position;
 
         //マウスカーソルを非表示にして画面中央で固定する
-        Cursor.lockState = CursorLockMode.Locked;
+        //今回はここではしない
+        //Cursor.lockState = CursorLockMode.Locked;
 
     }
 
     private void Update()
     {
+        //カメラの感度を適応させる
+        cameraSpeed = cSlider.value;
+
         //ターゲットの移動量分、カメラも追従する
         ///ターゲットの「前フレームからの移動量」を求め、その分だけカメラも移動させる。こうすることでカメラとターゲットの距離を一定に保つ
         ///引かないと毎フレーム元の座標が足され続け、爆速でどこかにフライアウェイする
