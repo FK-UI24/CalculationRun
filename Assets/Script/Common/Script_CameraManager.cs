@@ -1,5 +1,4 @@
-﻿using UnityEditor.Rendering;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Script_CameraManager : MonoBehaviour
 {
