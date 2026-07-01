@@ -37,6 +37,9 @@ public class Script_ScoreTimer : MonoBehaviour
             //‚P•b‘Ò‚Â
             yield return new WaitForSeconds(1f);
 
+            //ƒXƒRƒAƒ^ƒCƒ}[‚ª99999ˆÈã‚É‚È‚Á‚½‚ç‚»‚êˆÈã‘‚¦‚È‚¢‚æ‚¤‚É‚·‚é
+            if (scoreTimer >= 99999) yield return null;
+
             //‚P•b‘Ò‚Á‚½‚Ì‚Å’Ç‰Á‚·‚é
             scoreTimer++;
 

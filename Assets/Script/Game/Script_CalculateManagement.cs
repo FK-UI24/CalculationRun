@@ -45,6 +45,36 @@ public class Script_CalculateManagement : MonoBehaviour
 
     void Start()
     {
+        //難易度に応じて制限時間と確率をいじる
+        if (Scrip_TitlManager.isHard)
+        {
+            countdown = 5;
+            weight2Terms = 0.0f;
+            weight3Terms = 0.3f;
+            weight4Terms = 0.5f;
+            weight5Terms = 0.2f;
+
+            weightPlus = 0.25f;
+            weightMinus = 0.25f;
+            weightMultiply = 0.3f;
+            weightDivide = 0.2f;
+
+        }
+        else
+        {
+            countdown = 7;
+            weight2Terms = 0.3f;
+            weight3Terms = 0.4f;
+            weight4Terms = 0.3f;
+            weight5Terms = 0.0f;
+
+            weightPlus = 0.35f;
+            weightMinus = 0.35f;
+            weightMultiply = 0.2f;
+            weightDivide = 0.1f;
+
+        }
+
         //式を生成し、テキストに表示と答えを保存
         GenerateExpression();
 

@@ -70,6 +70,9 @@ public class Script_GoalManagement : MonoBehaviour
         {
             if (!SE.isPlaying)
             {
+                //ちょっとだけ余裕を持たせる
+                yield return new WaitForSeconds(0.5f);
+
                 ///フェードアウト中、プレイヤーが誤って裏のボタンを押さないようにパネルにクリック判定を入れる
                 canvasGroup.blocksRaycasts = true;
 
@@ -87,6 +90,9 @@ public class Script_GoalManagement : MonoBehaviour
                     ///第三引数は0から1までが入り、0は初めの位置、1が終わりの位置である
                     canvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / fadeOutTime);
 
+                    //ゴールテキストも進行度に合わせて透明にする
+                    goalText.alpha = Mathf.Lerp(1f, 0f, timer / fadeOutTime);
+
                     //処理を次のフレームまで止める
                     ///いわゆるreturnのコルーチン版である
                     yield return null;
@@ -98,6 +104,8 @@ public class Script_GoalManagement : MonoBehaviour
                 //フェードアウトが終了したらシーンを遷移する
                 SceneManager.LoadScene("Result");
             }
+
+            yield return null;
 
         }
 
