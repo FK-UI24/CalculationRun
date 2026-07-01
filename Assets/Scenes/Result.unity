@@ -1230,11 +1230,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
-  m_ScreenMatchMode: 0
+  m_ReferenceResolution: {x: 1980, y: 1080}
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -1307,6 +1307,7 @@ MonoBehaviour:
   - "\u30B9\u30B3\u30A2\u306F\uFF10\u306B\u8FD1\u3044\u307B\u3069\u826F\u3044\u7D50\u679C\u3060\u3088"
   - "\u30BF\u30A4\u30EB\u306E\u8272\u306F\u6570\u5B57\u3054\u3068\u306B\u540C\u3058\u3060\u3088"
   - "\u30B2\u30FC\u30E0\u4E2D\u306E\u30B9\u30B3\u30A2\u306F\u53F3\u4E0B\u306B\u3067\u3066\u308B\u3088"
+  - "\u30AF\u30B7\u30B3\u30B9\u30DD\u30B9\u30C8\u3063\u3066\u3044\u3046\u3089\u3057\u3044\u3088"
   hardText: {fileID: 1926088311}
 --- !u!4 &1671825218
 Transform:
